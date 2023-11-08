@@ -12,7 +12,7 @@ for path in os.listdir(dir_path):
 for i in range(count):
 
     image = cv.imread(f"./pics/reference/IMG_23{38+i}.jpg")
-    print()
+    print(f"Image {i} processing")
     #convert the image to RGB (images are read in BGR in OpenCV)
     image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
     #split the image into its three channels
@@ -41,8 +41,17 @@ for i in range(count):
     contours, hierarchy = cv.findContours(edged,  
         cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE) 
     
+    new_contours = []
+    for c in contours:
+        if len(c) > 150:
+            approx = cv.approxPolyDP(c, 0.03*cv.arcLength(c, True), True)  # form approximations of the shapes ...
+            if len(approx) == 3:
+                new_contours.append(c)
+    
+    cv.drawContours(image, new_contours, -1, (0, 255, 0), 3) 
+
     #cv.imshow('Canny Edges After Contouring', edged) 
-    cv.drawContours(image, contours, -1, (0, 255, 0), 3) 
+
     #cv.imshow("Cool outlines",image)
     cv.waitKey(0) 
 
